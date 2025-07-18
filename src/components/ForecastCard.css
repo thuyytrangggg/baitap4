@@ -1,0 +1,141 @@
+.forecast-card {
+  background: #f8fafc;
+  border-radius: 4px;
+  padding: 24px 16px;
+  text-align: center;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%; 
+  min-height: 140px;
+}
+
+.forecast-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.forecast-card.today {
+  background: #4a90e2;
+  color: white;
+}
+
+.forecast-date {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  color: inherit;
+}
+
+.forecast-card.today .forecast-date {
+  color: white;
+}
+
+.forecast-icon {
+  font-size: 36px;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+
+.forecast-humidity {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.humidity-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.forecast-card.today .humidity-label {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.humidity-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: inherit;
+}
+
+.temperature-options {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.temp-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.temp-value {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.temp-label {
+  font-size: 10px;
+  color: #6b7280;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.forecast-card.today .temp-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.forecast-card.today .temp-value {
+  color: white !important;
+}
+
+@media (max-width: 768px) {
+  .forecast-card {
+    padding: 20px 12px;
+    min-height: 120px;
+  }
+
+  .forecast-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+
+  .forecast-date {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .humidity-value {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .forecast-card {
+    padding: 16px 12px;
+    min-height: 100px;
+  }
+
+  .forecast-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .forecast-date {
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .humidity-value {
+    font-size: 14px;
+  }
+}
