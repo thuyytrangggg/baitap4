@@ -13,9 +13,9 @@
 
 .city-input-container {
   margin-bottom: 32px;
-  display: flex;
+  display: flex; 
   align-items: center; 
-  gap: 16px;
+  gap: 12px; 
 }
 
 .city-input-container label {
@@ -26,7 +26,7 @@
 }
 
 .city-input {
-  width: 250px;
+  width: 200px;
   padding: 8px 12px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
@@ -42,7 +42,7 @@
 
 .weather-content {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 2fr; 
   gap: 48px;
   align-items: start;
 }
@@ -81,7 +81,7 @@
   }
 
   .city-input-container {
-    flex-direction: column;
+    flex-direction: column; 
     align-items: flex-start;
     gap: 8px;
   }

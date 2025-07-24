@@ -62,7 +62,7 @@ const TemperatureChart = ({ data, currentWeather }) => {
 
   const currentTimeIndex = getCurrentTimeIndex()
 
-  const chartWidth = 400
+  const chartWidth = 400 
   const paddingX = 0 
   const chartPoints = data.map((point, index) => {
     const x = (index / (data.length - 1)) * chartWidth + paddingX
@@ -71,7 +71,17 @@ const TemperatureChart = ({ data, currentWeather }) => {
   })
 
   const currentPointData = chartPoints[currentTimeIndex]
-  const currentValue = currentPointData ? currentPointData.value : null
+  let displayCurrentValue = null
+
+  if (currentWeather) {
+    if (activeChart === "temp") {
+      displayCurrentValue = currentWeather.temperature
+    } else if (activeChart === "uv") {
+      displayCurrentValue = currentWeather.uv
+    } else if (activeChart === "humidity") {
+      displayCurrentValue = currentWeather.humidity
+    }
+  }
 
   const createSmoothCurve = (points) => {
     if (points.length < 2) return ""
@@ -116,7 +126,6 @@ const TemperatureChart = ({ data, currentWeather }) => {
       </div>
 
       <div className="chart-container">
-        {/* Giữ nguyên viewBox 0 0 400 100 */}
         <svg className="chart-svg" viewBox="0 0 400 100">
           <defs>
             <linearGradient id={`${activeChart}Gradient`} x1="0%" y1="0%" x2="0%" y2="100%">
@@ -150,7 +159,7 @@ const TemperatureChart = ({ data, currentWeather }) => {
           />
 
           {/* Current time point - hiển thị giá trị tương ứng của giờ đó */}
-          {currentPointData && currentValue !== null && (
+          {currentPointData && displayCurrentValue !== null && (
             <g>
               {/* Outer glow */}
               <circle cx={currentPointData.x} cy={currentPointData.y} r="8" fill={currentConfig.color} opacity="0.2" />
@@ -176,7 +185,7 @@ const TemperatureChart = ({ data, currentWeather }) => {
                 fill={currentConfig.color}
                 style={{ textShadow: "0 1px 2px rgba(255,255,255,0.8)" }}
               >
-                {Math.round(currentValue)}
+                {Math.round(displayCurrentValue)}
                 {currentConfig.unit}
               </text>
             </g>

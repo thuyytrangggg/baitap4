@@ -6,11 +6,16 @@ import { setWeatherData, setLoading, setError } from "../store/weatherSlice"
 import WeatherCard from "./WeatherCard"
 import TemperatureChart from "./TemperatureChart"
 import ForecastCard from "./ForecastCard"
+import Modal from "./Modal"
 import "./WeatherApp.css"
+
+import { Sun, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, Cloudy } from "lucide-react"
 
 const WeatherApp = () => {
   const [city, setCity] = useState("Hanoi")
   const [searchCity, setSearchCity] = useState("Hanoi")
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedDayData, setSelectedDayData] = useState(null)
   const dispatch = useDispatch()
   const { currentWeather, forecast, temperatureData, loading, error } = useSelector((state) => state.weather)
 
@@ -21,12 +26,15 @@ const WeatherApp = () => {
   const fetchWeatherData = async (cityName) => {
     dispatch(setLoading(true))
     try {
+      const apiKey = import.meta.env.VITE_WEATHER_API_KEY
+
       const response = await fetch(
-        `https://api.weatherapi.com/v1/forecast.json?key=f5ac4be4a19c47d8a3e42522222112&q=${cityName}&days=4&aqi=no&alerts=yes`,
+        `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${cityName}&days=4&aqi=no&alerts=yes`
       )
 
+
       if (!response.ok) {
-        throw new Error("City not found.")
+        throw new Error("Không thể tìm thấy thành phố. Vui lòng thử lại.")
       }
 
       const data = await response.json()
@@ -36,7 +44,7 @@ const WeatherApp = () => {
         condition: data.current.condition.text,
         humidity: data.current.humidity,
         windSpeed: data.current.wind_kph,
-        uv: data.current.uv, 
+        uv: data.current.uv,
         icon: getWeatherIcon(data.current.condition.code),
         time: formatDateTime(data.location.localtime),
         location: data.location.name + ", " + data.location.country,
@@ -46,16 +54,21 @@ const WeatherApp = () => {
         date: formatDate(day.date),
         icon: getWeatherIcon(day.day.condition.code),
         humidity: day.day.avghumidity,
-        temp: {
-          min: Math.round(day.day.mintemp_f),
-          max: Math.round(day.day.maxtemp_f),
-          current: Math.round((day.day.mintemp_f + day.day.maxtemp_f) / 2),
-        },
+        minTemp: Math.round(day.day.mintemp_f),
+        maxTemp: Math.round(day.day.maxtemp_f),
+        hourly: day.hour.map((h) => ({
+          time: formatHour(h.time),
+          temp_f: h.temp_f,
+          condition: h.condition,
+          uv: h.uv,
+          humidity: h.humidity,
+          icon: getWeatherIcon(h.condition.code),
+        })),
       }))
 
-      const hourlyData = data.forecast.forecastday[0].hour
+      const hourlyDataForChart = data.forecast.forecastday[0].hour
       const filteredHours = [0, 6, 12, 18, 23].map((hour) => {
-        const hourData = hourlyData.find((h) => new Date(h.time).getHours() === hour) || hourlyData[0]
+        const hourData = hourlyDataForChart.find((h) => new Date(h.time).getHours() === hour) || hourlyDataForChart[0]
         return {
           time: formatHour(hourData.time),
           temp: Math.round(hourData.temp_f),
@@ -80,15 +93,60 @@ const WeatherApp = () => {
     }
   }
 
+  // Chuyển đổi mã điều kiện thời tiết thành Lucide React Component
   const getWeatherIcon = (code) => {
-    if (code >= 1000 && code < 1003) return "☀️" 
-    if (code >= 1003 && code < 1030) return "☁️" 
-    if (code >= 1030 && code < 1063) return "🌫️" 
-    if (code >= 1063 && code < 1087) return "🌧️" 
-    if (code >= 1087 && code < 1114) return "⛈️" 
-    if (code >= 1114 && code < 1200) return "❄️" 
-    if (code >= 1200 && code < 1300) return "🌨️" 
-    return "☁️"
+    switch (code) {
+      case 1000: // Sunny / Clear
+        return Sun
+      case 1003: // Partly cloudy
+        return Cloud
+      case 1006: // Cloudy
+      case 1009: // Overcast
+        return Cloudy
+      case 1030: // Mist
+      case 1135: // Fog
+      case 1147: // Freezing fog
+        return CloudFog
+      case 1063: // Patchy light rain
+      case 1150: // Light drizzle
+      case 1153: // Light drizzle
+      case 1180: // Patchy light rain
+      case 1183: // Light rain
+      case 1186: // Moderate rain at times
+      case 1189: // Moderate rain
+      case 1240: // Light rain shower
+      case 1243: // Moderate or heavy rain shower
+        return CloudRain
+      case 1066: // Patchy light snow
+      case 1114: // Blowing snow
+      case 1117: // Blizzard
+      case 1210: // Light snow
+      case 1213: // Light snow
+      case 1216: // Moderate snow at times
+      case 1219: // Moderate snow
+      case 1255: // Light snow showers
+      case 1258: // Moderate or heavy snow showers
+        return CloudSnow
+      case 1087: // Thundery outbreaks in nearby
+      case 1273: // Patchy light rain with thunder
+      case 1276: // Moderate or heavy rain with thunder
+        return CloudLightning
+      case 1168: // Freezing drizzle
+      case 1171: // Heavy freezing drizzle
+      case 1192: // Heavy rain at times
+      case 1195: // Heavy rain
+      case 1201: // Moderate or heavy sleet
+      case 1204: // Light sleet showers
+      case 1207: // Moderate or heavy sleet showers
+      case 1237: // Ice pellets
+      case 1249: // Light showers of ice pellets
+      case 1252: // Moderate or heavy showers of ice pellets
+      case 1261: // Light snow showers
+      case 1264: // Moderate or heavy snow showers
+        return CloudRain // Or a more specific icon if available
+      default:
+        return Cloud // Default to general cloud
+    }
   }
 
   const formatDateTime = (dateTimeStr) => {
@@ -122,9 +180,16 @@ const WeatherApp = () => {
     return date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
   }
 
+  // Format giờ từ chuỗi thời gian thành "XX giờ"
   const formatHour = (timeStr) => {
     const date = new Date(timeStr)
-    return date.toLocaleString("en-US", { hour: "numeric", hour12: true })
+    const hour = date.getHours()
+    return `${String(hour).padStart(2, "0")} giờ`
+  }
+
+  const handleCardDoubleClick = (dayData) => {
+    setSelectedDayData(dayData)
+    setIsModalOpen(true)
   }
 
   const handleCityChange = (e) => {
@@ -138,7 +203,7 @@ const WeatherApp = () => {
   }
 
   if (loading) {
-    return <div className="loading">Loading...</div>
+    return <div className="loading">Đang tải dữ liệu thời tiết...</div>
   }
 
   if (error) {
@@ -156,7 +221,7 @@ const WeatherApp = () => {
             value={city}
             onChange={handleCityInputChange}
             onKeyPress={handleCityChange}
-            placeholder="Enter city name"
+            placeholder="Enter city name and press Enter"
             className="city-input"
           />
         </div>
@@ -169,14 +234,14 @@ const WeatherApp = () => {
           <div className="right-section">
             <TemperatureChart data={temperatureData || []} currentWeather={currentWeather} />
             <div className="forecast-container">
-              {/* Chỉ render 3 thẻ dự báo đầu tiên */}
               {forecast?.slice(0, 3).map((day, index) => (
-                <ForecastCard key={index} forecast={day} isToday={index === 0} />
+                <ForecastCard key={index} forecast={day} isToday={index === 0} onDoubleClick={handleCardDoubleClick} />
               ))}
             </div>
           </div>
         </div>
       </div>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} data={selectedDayData} />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 .temperature-chart {
   position: relative;
-  width: 100%;
+  width: 100%; 
 }
 
 .chart-header {
@@ -43,8 +43,8 @@
   position: relative;
   height: 120px;
   background: linear-gradient(135deg, #fafbfc 0%, #f0f4f8 100%);
-  border-radius: 2px;
-  padding: 0;
+  border-radius: 6px;
+  padding: 0; 
   overflow: visible;
   width: 100%; 
 }
@@ -58,7 +58,7 @@
 @media (max-width: 768px) {
   .chart-container {
     height: 100px;
-    padding: 0;
+    padding: 0; 
   }
 
   .chart-tab {
@@ -70,6 +70,6 @@
 @media (max-width: 480px) {
   .chart-container {
     height: 80px;
-    padding: 0; 
+    padding: 0;
   }
 }

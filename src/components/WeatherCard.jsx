@@ -3,12 +3,22 @@ import "./WeatherCard.css"
 const WeatherCard = ({ weather }) => {
   if (!weather) return null
 
+  // Render icon based on whether it's a string (emoji) or a React component
+  const renderIcon = (IconComponent, size = 64) => {
+    if (typeof IconComponent === "string") {
+      return <span style={{ fontSize: `${size}px` }}>{IconComponent}</span>
+    }
+    // Assuming IconComponent is a Lucide React component
+    const Icon = IconComponent
+    return <Icon size={size} />
+  }
+
   return (
     <div className="weather-card">
       <div className="current-time">{weather.time}</div>
 
       <div className="main-weather">
-        <div className="weather-icon">{weather.icon}</div>
+        <div className="weather-icon">{renderIcon(weather.icon, 64)}</div>
         <div className="temperature">{weather.temperature}°F</div>
       </div>
 

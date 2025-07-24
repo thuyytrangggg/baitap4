@@ -1,0 +1,150 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px; 
+  position: relative;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); 
+  animation: slideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: #000; 
+}
+
+.modal-title {
+  display: none; 
+}
+
+.modal-current-day-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; 
+  gap: 5px; 
+  margin-bottom: 0; 
+  padding-bottom: 0; 
+  border-bottom: none; 
+}
+
+.modal-header-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 10px; 
+  margin-bottom: 20px;
+}
+
+.modal-current-temp {
+  font-size: 40px; 
+  font-weight: 400;
+  line-height: 1;
+  color: #353535;
+}
+
+.modal-condition-text {
+  font-size: 14px;
+  color: #474747;
+  margin-top: 5px;
+}
+
+.modal-min-max-temp {
+  font-size: 14px;
+  color: #474747; 
+  margin-top: 5px;
+}
+
+.modal-icon-temp {
+  display: none;
+}
+
+.modal-hourly-title {
+  display: none; 
+}
+
+.modal-chart-container {
+  background: #fff; 
+  border-radius: 0; 
+  padding: 0; 
+  height: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible; 
+}
+
+.modal-chart-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible; 
+}
+
+.modal-chart-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  color: #666666; 
+}
+
+.no-chart-data {
+  color: #6b7280;
+  font-size: 14px;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 15px;
+  }
+
+  .modal-current-temp {
+    font-size: 40px;
+  }
+
+  .modal-condition-text,
+  .modal-min-max-temp {
+    font-size: 14px;
+  }
+
+  .modal-chart-container {
+    height: 200px; 
+  }
+}
